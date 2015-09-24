@@ -1,4 +1,5 @@
 <h1><%= @article.title %></h1>
+<p><%= "Posted by #{Author.find(@article.author_id).email}" %></p>
 <p><%= image_tag @article.image.url(:resized) if @article.image.exists? %></p>
 <p><%= @article.body %></p>
 <% if logged_in? %>
