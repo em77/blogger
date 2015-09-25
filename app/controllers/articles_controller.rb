@@ -1,5 +1,6 @@
 class ArticlesController < ApplicationController
   before_filter :require_login, except: [:index, :show, :destroy]
+  before_filter :correct_user, only: [:destroy, :edit]
 
   include ArticlesHelper
 
@@ -26,11 +27,6 @@ class ArticlesController < ApplicationController
   end
 
   def edit
-    @article = Article.find(params[:id])
-    if current_user.id != @article.author_id
-      redirect_to article_path(@article)
-      flash.notice = "You may only edit your own articles."
-    end
   end
 
   def update
@@ -41,14 +37,16 @@ class ArticlesController < ApplicationController
   end
 
   def destroy
+    @article.destroy
+    flash.notice = "Article '#{@article.title}' was deleted!"
+    redirect_to articles_path
+  end
+
+  def correct_user
     @article = Article.find(params[:id])
-    if current_user.id != @article.author_id
+    unless current_user.id == @article.author_id
+      flash.notice = "You may only edit or delete your own articles"
       redirect_to article_path(@article)
-      flash.notice = "You may only delete your own articles."
-    else
-      @article.destroy
-      flash.notice = "Article '#{@article.title}' was deleted!"
-      redirect_to articles_path
     end
   end
 end

@@ -8,7 +8,9 @@
 </head>
 <body>
 
-<p class="flash"><%= flash.notice %></p>
+<% flash.each do |key, msg| %>
+  <%= content_tag(:p, msg, class: "flash") %>
+<% end %>
 
 <%= yield %>
 <hr>
